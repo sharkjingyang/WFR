@@ -64,7 +64,7 @@ parser.add_argument('--viz_freq', type=int, default=def_viz_freq)
 parser.add_argument('--val_freq', type=int, default=10000)
 parser.add_argument('--gpu'     , type=int, default=3)
 parser.add_argument('--sample_freq', type=int, default=25000)
-parser.add_argument('--alphaa', type=float, default=10)
+parser.add_argument('--alphaa', type=float, default=10)   #source term coefficient
 
 args = parser.parse_args()
 
