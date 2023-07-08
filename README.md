@@ -1,4 +1,4 @@
-# OT-Flow
+# UOT-gen
 Pytorch implementation of our UOT-gen。
 
 ## Associated Publication
