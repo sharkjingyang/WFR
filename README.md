@@ -30,3 +30,9 @@ for 2d and high-dimension experiment, see
 trainToyOTflow_high_Bayes.py (train) & high_dim_Bayes folder (evaluation)
 ```
 
+for traditional optimization method to solve UOT:
+
+```
+ OT-traditional folder 
+```
+
