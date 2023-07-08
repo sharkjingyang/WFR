@@ -18,3 +18,15 @@ Please cite as
 
 
 
+for 1d toy experiment, see 
+
+```
+trainToyOTflow_1d_inverse.py
+```
+
+for 2d and high-dimension experiment, see
+
+```
+trainToyOTflow_high_Bayes.py (train) & high_dim_Bayes folder (evaluation)
+```
+

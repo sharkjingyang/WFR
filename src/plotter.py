@@ -8,7 +8,7 @@ except:
     matplotlib.use('Agg') # for linux server with no tkinter
 matplotlib.use('Agg') # assume no tkinter
 import matplotlib.pyplot as plt
-
+plt.rcParams['image.cmap'] = 'inferno'
 from src.OTFlowProblem import *
 # from src.birth_death_process import *
 # from source_without_BD_WGAN_2d import *
@@ -42,7 +42,7 @@ def plot4(net, x, y, nt_val, sPath, sTitle="", doPaths=False):
 
     invErr = torch.norm(x[:,0:d] - finvfx[:,0:d]) / x.shape[0]
 
-    nBins = 33
+    nBins = 70
     LOWX  = -4
     HIGHX = 4
     LOWY  = -4
@@ -64,30 +64,39 @@ def plot4(net, x, y, nt_val, sPath, sTitle="", doPaths=False):
         LOWY  = -10
         HIGHY = 10
     elif d==8: # assuming gas
-        LOWX  = -2   # note: there's a hard coded 4 and -4 in axs 2
-        HIGHX =  2
-        LOWY  = -2
-        HIGHY =  2
+        LOWX  = -0.4   # note: there's a hard coded 4 and -4 in axs 2
+        HIGHX = 0.4
+        LOWY  = -0.4
+        HIGHY = 0.4 
         d1=2
         d2=3
         nBins = 100
+    elif d==56: # SVGD_data
+        LOWX  = -3
+        HIGHX = 3
+        LOWY  = -3
+        HIGHY = 3
+        d1=18
+        d2=17
+        nBins = 70
     else:
         d1=0
         d2=1
 
     fig, axs = plt.subplots(2, 2)
-    fig.set_size_inches(12, 10)
+    fig.set_size_inches(12, 12)
     fig.suptitle(sTitle + ', inv err {:.2e}'.format(invErr))
 
     # hist, xbins, ybins, im = axs[0, 0].hist2d(x.numpy()[:,0],x.numpy()[:,1], range=[[LOW, HIGH], [LOW, HIGH]], bins = nBins)
     im1 , _, _, map1 = axs[0, 0].hist2d(x.detach().cpu().numpy()[:, d1], x.detach().cpu().numpy()[:, d2], range=[[LOWX, HIGHX], [LOWY, HIGHY]], bins=nBins)
     axs[0, 0].set_title('x from rho_0')
-    im2 , _, _, map2 = axs[0, 1].hist2d(fx.detach().cpu().numpy()[:, d1], fx.detach().cpu().numpy()[:, d2], range=[[-4, 4], [-4, 4]], bins = nBins)
+    im2 , _, _, map2 = axs[0, 1].hist2d(fx.detach().cpu().numpy()[:, d1], fx.detach().cpu().numpy()[:, d2], range=[[LOWX, HIGHX], [LOWY, HIGHY]], bins = nBins)
     axs[0, 1].set_title('f(x)')
     im3 , _, _, map3 = axs[1, 0].hist2d(finvfx.detach().cpu().numpy()[: ,d1] ,finvfx.detach().cpu().numpy()[: ,d2], range=[[LOWX, HIGHX], [LOWY, HIGHY]], bins = nBins)
     axs[1, 0].set_title('finv( f(x) )')
     im4 , _, _, map4 = axs[1, 1].hist2d(genModel.detach().cpu().numpy()[:, d1], genModel.detach().cpu().numpy()[:, d2], range=[[LOWX, HIGHX], [LOWY, HIGHY]], bins = nBins)
     axs[1, 1].set_title('finv( y from rho1 )')
+
 
     fig.colorbar(map1, cax=fig.add_axes([0.47, 0.53, 0.02, 0.35]) )
     fig.colorbar(map2, cax=fig.add_axes([0.89, 0.53, 0.02, 0.35]) )
@@ -116,8 +125,13 @@ def plot4(net, x, y, nt_val, sPath, sTitle="", doPaths=False):
     # sPath = os.path.join(args.save, 'figs', sStartTime + '_{:04d}.png'.format(itr))
     if not os.path.exists(os.path.dirname(sPath)):
         os.makedirs(os.path.dirname(sPath))
-    plt.savefig(sPath, dpi=300)
+        
+    new_path="C:/Users/shark/桌面/WFR-main/high_dim_Bayes/fig_train_immediate.png"
+    # plt.savefig(sPath, dpi=300)
+    plt.savefig(new_path, dpi=300)
     plt.close()
+
+
 
 def plot2d(net, x, y, nt_val, sPath, sTitle="", doPaths=False):
     """
@@ -265,36 +279,95 @@ def plot1d(net, x, y, nt_val, sPath, sPath2, sPath3, sPath4, sPath5, sTitle="", 
     """
 
     d = net.d
-    if d != 1:
-        print("Error dimension")
-        return -1
+    # if d != 1:
+    #     print("Error dimension")
+    #     return -1
     nSamples = x.shape[0]
-    x = x.unsqueeze(-1)
 
-    X_data=np.random.normal(size=(10000,1))-3+6*(np.random.uniform(size=(10000,1))>(1/3))
-    w_data=torch.ones(X_data.shape).to(device).squeeze().float()
+    # X_data=np.random.normal(size=(10000,1))-3+6*(np.random.uniform(size=(10000,1))>(1/3))
+    # w_data=torch.ones(X_data.shape).to(device).squeeze().float()
 
-    fx,phi= integrate_ex(torch.from_numpy(X_data).to(device).squeeze().float().reshape(-1,1), net, [0.0, 1], nt_val, stepper="rk4", alph=net.alph, alphaa=alphaa,intermediates=True)
-    # finvfx,_ = integrate_ex(fx[:, 0:d], net, [1, 0.0], nt_val, stepper="rk4", alph=net.alph, alphaa=alphaa)
+    # fx,phi= integrate_ex(torch.from_numpy(X_data).to(device).squeeze().float().reshape(-1,1), net, [0.0, 1], nt_val, stepper="rk4", alph=net.alph, alphaa=alphaa,intermediates=True)
+    fx,phi= integrate_ex(x, net, [0.0, 1], nt_val, stepper="rk4", alph=net.alph, alphaa=alphaa,intermediates=True)
     genModel,phi_bar= integrate_ex_copy(y[:, 0:d], net, [1, 0.0], nt_val, stepper="rk4", alph=net.alph, alphaa=alphaa,intermediates=True)
 
-    nBins=100
-    fx1=fx.detach().cpu().numpy()
-    genModel1 = genModel.detach().cpu().numpy()
-  
-    X_p=fx1[:,0,8]
-    w_p=fx1[:,-1,8]
-    np.save("/home/liuchang/OT-Flow/1d_plot/figs/forward.npy",(X_p,w_p))
-    np.save("/home/liuchang/OT-Flow/1d_plot/figs/zfull.npy",fx.cpu().numpy())
-
-
-    X_plot=genModel1[:,0]
-    w_plot=genModel1[:,-1]
-    np.save("/home/liuchang/OT-Flow/1d_plot/figs/inverse.npy",(X_plot,w_plot))
-    np.save("/home/liuchang/OT-Flow/1d_plot/figs/zfull_inverse.npy",genModel.cpu().numpy())
-
-
     
+    if d>50:
+        ##high Bayes experiment
+        fx1=fx.detach().cpu().numpy()
+        genModel1 = genModel.detach().cpu().numpy()
+        X_p=fx1[:,0:d,-1]
+        w_p=fx1[:,-1,-1]
+        # np.save("C:/Users/shark/桌面/WFR-main/high_dim_Bayes/z_final.npy",X_p)
+        # np.save("C:/Users/shark/桌面/WFR-main/high_dim_Bayes/w_final.npy",w_p)
+        X_p=genModel1[:,0:d,-1]
+        w_p=genModel1[:,-1,-1]
+        # np.save("C:/Users/shark/桌面/WFR-main/high_dim_Bayes/z_inverse.npy",X_p)
+        # np.save("C:/Users/shark/桌面/WFR-main/high_dim_Bayes/w_inverse.npy",w_p)
+        
+        theta_gen_weight=np.hstack((X_p,w_p.reshape(-1,1)))
+        np.save("C:/Users/shark/桌面/WFR-main/high_dim_Bayes/WFR_gen_theta_weight.npy",theta_gen_weight)
+
+
+
+
+
+    if d==2:
+        fx1=fx.detach().cpu().numpy()
+        genModel1 = genModel.detach().cpu().numpy()
+        X_p=fx1[:,0:d,-1]
+        w_p=fx1[:,-1,-1]
+        Gaussian_p=y.detach().cpu().numpy()
+        data_p=x.detach().cpu().numpy()
+        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/z_final.npy",X_p)
+        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/w_final.npy",w_p)
+        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/Gaussian_samples.npy",Gaussian_p)
+        X_p=genModel1[:,0:d,-1]
+        w_p=genModel1[:,-1,-1]
+        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/z_inverse.npy",X_p)
+        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/w_inverse.npy",w_p)
+        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/data_samples.npy",data_p)
+
+
+
+    ##plot 1d
+    if d==1:
+        # nBins=100
+        # fx1=fx.detach().cpu().numpy()
+        # genModel1 = genModel.detach().cpu().numpy()
+    
+        # X_p=fx1[:,0:d,:]
+        # w_p=fx1[:,-1,:]
+        
+        # np.save("C:/Users/shark/桌面/WFR-main/1d_plot/figs/forward_5.npy",(X_p,w_p))
+        # np.save("C:/Users/shark/桌面/WFR-main/1d_plot/figs/zfull.npy",fx.cpu().numpy())
+
+
+        # X_plot=genModel1[:,0]
+        # w_plot=genModel1[:,-1]
+        # np.save("C:/Users/shark/桌面/WFR-main/1d_plot/figs/inverse_5.npy",(X_plot,w_plot))
+        # np.save("C:/Users/shark/桌面/WFR-main/1d_plot/figs/zfull_inverse.npy",genModel.cpu().numpy())
+
+
+        fx1=fx.detach().cpu().numpy()
+        genModel1 = genModel.detach().cpu().numpy()
+        X_p=fx1[:,0:d,-1]
+        w_p=fx1[:,-1,-1]
+        Gaussian_p=y.detach().cpu().numpy()
+        data_p=x.detach().cpu().numpy()
+        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/z_final_1d.npy",X_p)
+        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/w_final_1d.npy",w_p)
+        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/Gaussian_samples_1d.npy",Gaussian_p)
+        X_p=genModel1[:,0:d,-1]
+        w_p=genModel1[:,-1,-1]
+        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/z_inverse_1d.npy",X_p)
+        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/w_inverse_1d.npy",w_p)
+        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/data_samples_1d.npy",data_p)
+
+
+
+
+
     # p=np.argsort(X_plot,axis=0)
     # X_new=np.sort(X_plot,axis=0)
     # w_new=w_1[p].squeeze()

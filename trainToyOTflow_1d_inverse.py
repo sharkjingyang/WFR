@@ -18,10 +18,10 @@ from src.plotter import plot1d
 from source_without_BD import *
 from src.mmd_new import *
 
-import config
+# import config
 
 
-cf = config.getconfig()
+# cf = config.getconfig()
 
 # if cf.gpu: # if gpu on platform
 #     def_viz_freq = 1000
@@ -32,9 +32,9 @@ cf = config.getconfig()
 #     def_batch    = 2048
 #     def_niter    = 1000
 
-def_viz_freq = 400
+def_viz_freq = 5
 def_batch = 10000
-def_niter = 500
+def_niter = 5000
 
 parser = argparse.ArgumentParser('UOT-Flow')
 parser.add_argument(
@@ -61,10 +61,10 @@ parser.add_argument('--prec'        , type=str  , default='single', choices=['si
 
 parser.add_argument('--save'    , type=str, default='experiments/cnf/toy')
 parser.add_argument('--viz_freq', type=int, default=def_viz_freq)
-parser.add_argument('--val_freq', type=int, default=10000)
-parser.add_argument('--gpu'     , type=int, default=3)
+parser.add_argument('--val_freq', type=int, default=10000)  # no validation
+parser.add_argument('--gpu'     , type=int, default=0)
 parser.add_argument('--sample_freq', type=int, default=25000)
-parser.add_argument('--alphaa', type=float, default=10)   #source term coefficient
+parser.add_argument('--alphaa', type=float, default=2)   #source term coefficient
 
 args = parser.parse_args()
 
@@ -87,6 +87,8 @@ logger.info("start time: " + start_time)
 logger.info(args)
 
 device = torch.device('cuda:' + str(args.gpu) if torch.cuda.is_available() else 'cpu')
+# device = torch.device( 'cpu')
+
 
 def stepRK4_new(odefun_new, z, Phi, t0, t1, alphaa=args.alphaa):
 
@@ -184,17 +186,15 @@ if __name__ == '__main__':
     # use one batch as the entire data set
 
     print(args.data)
-    # y1 = cvt(torch.randn(args.batch_size, d))
-    # x0, rho_x0 = toy_data.inf_train_gen(args.data, batch_size=args.batch_size, require_density=False)
-    # x0 = cvt(torch.from_numpy(x0))
-
-    # file_demo=os.path.join(args.save,'data_demo_{}.pt'.format(args.batch_size))
-    # x0,y1=torch.load(file_demo)
-
-    X_data,w_data=np.load("/home/liuchang/OT-Flow/single_plot_Baysian/bernoulli.npy")
-    w_data=torch.from_numpy(w_data).to(device).squeeze().float()
-    
+    X_data,_ = toy_data.inf_train_gen(args.data, batch_size=args.batch_size, require_density=False)
+    # X_data=np.random.normal(size=(10000,1))-3+6*(np.random.uniform(size=(10000,1))>(1/3))
     x0=torch.from_numpy(X_data).to(device).squeeze().float()
+
+
+    # X_data,w_data=np.load("/home/liuchang/OT-Flow/single_plot_Baysian/bernoulli.npy")
+    # w_data=torch.from_numpy(w_data).to(device).squeeze().float()
+    # x0=torch.from_numpy(X_data).to(device).squeeze().float()
+
     x2 = torch.randn(args.batch_size).to(device)
     log_msg = (
         '{:5s}  {:6s}   {:9s}  {:9s}  {:9s}  {:9s} {:9s}     {:9s}  {:9s}  {:9s}  {:9s} {:9s} '.format(
@@ -289,7 +289,7 @@ if __name__ == '__main__':
         time_meter.update(time.time() - end)
 
         log_message = (
-            '{:05d}  {:6.3f}   {:9.3e}  {:9.3e}  {:9.3e}  {:9.3e} '.format(
+            '{:05d}  {:6.3f}   {:9.5f}  {:9.5f}  {:9.5f}  {:9.5f} '.format(
                 itr, time_meter.val , loss, costs[0], costs[1], costs[2]
             )
         )
@@ -326,6 +326,25 @@ if __name__ == '__main__':
                                 start_time + '_{:}_alph{:}_{:}_m{:}_checkpt.pth'.format(args.data, int(alph[1]),
                                                                                         int(alph[2]), m)))
             net.train()
+
+        
+        if itr%100==0:
+            with torch.no_grad():
+                net.eval()
+                x0val, rho_x0val = toy_data.inf_train_gen(args.data, batch_size=10000,require_density=False)
+                x0val = cvt(torch.from_numpy(x0val))
+                x3 = torch.randn(args.batch_size).to(device)
+                test_loss, test_costs, test_weights, test_devi = compute_loss_1(net, x0val,x3, nt=30)
+                log_message = '    1/2rho v^2+1/2 alpha rho g^2 {:9.5f}  '.format(test_costs[0])
+                net.train()
+
+
+
+
+
+
+
+
 
 
         # validate
@@ -383,7 +402,7 @@ if __name__ == '__main__':
                 curr_state = net.state_dict()
                 net.load_state_dict(best_params)
 
-                nSamples = 100000
+                nSamples = 1000
                 p_samples, _ = cvt(torch.Tensor(toy_data.inf_train_gen(args.data, batch_size=nSamples, require_density=False) ))
                 y = cvt(torch.randn(nSamples, d)) # sampling from the standard normal (rho_1)
 
@@ -446,7 +465,7 @@ if __name__ == '__main__':
 
         end = time.time()
 
-    print('costL_list:', costL_list)
+    # print('costL_list:', costL_list)
     # print(ITR)
 
     # print('Inverse_Flow_MMD',MMD_list)

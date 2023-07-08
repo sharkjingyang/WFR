@@ -11,7 +11,7 @@ from approximate_rho0 import *
 def density(x, centers, weights=[0.5,0.5]):
     return sum(1 / sqrt(2 * pi) * exp(-(x - i[0]) ** 2 / 2) * i[1] for i in zip(centers, weights))
 
-def inf_train_gen(data, rng=None, batch_size=200, require_density=True, device=torch.device('cuda:' + str(1) if torch.cuda.is_available() else 'cpu')):
+def inf_train_gen(data, rng=None, batch_size=200, require_density=True, device=torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')):
     if rng is None:
         rng = np.random.RandomState()
     
@@ -159,12 +159,27 @@ def inf_train_gen(data, rng=None, batch_size=200, require_density=True, device=t
             return dataset, p0, d_net
         else:
             return dataset
+        
+    elif data == "SVGD_exp":
+        theta_SVGD= np.load('high_dim_Bayes/theta_SVGD.npy')
+        return theta_SVGD
+    
+    elif data == "test_high_dim":
+        dataset = sklearn.datasets.make_swiss_roll(n_samples=batch_size, noise=1.0)[0]
+        dataset = dataset.astype("float32")[:, [0, 2]]
+        dataset /= 5
+        data_set=np.random.normal(size=(batch_size,8))
+        data_set[:,0]=dataset[:,0]
+        data_set[:,1]=dataset[:,1]
+        return data_set
+
+       
 
     elif data == "1d":
         # centers = [-4, -1, 2, 5]
         # weights = [0.25, 0.25,0.25,0.25]
-        centers = [-2, 2]
-        weights = [1/2,1/2]
+        centers = [-3, 3]
+        weights = [1/3,2/3]
 
         dataset = []
         rhox_true = []

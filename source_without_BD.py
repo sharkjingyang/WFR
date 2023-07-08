@@ -10,7 +10,7 @@ from torch.nn.functional import pad
 from src.Phi import *
 from src.KSD import *
 
-device = torch.device('cuda:' + str(3) if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 cvt = lambda x: x.to(device, non_blocking=True)
 def vec(x):
     """vectorize torch tensor x"""
@@ -24,9 +24,9 @@ def OTFlowProblem_1d(x, Phi, tspan, nt, stepper="rk4", alph=[1.0, 1.0, 1.0], alp
 
     # X_data,w_data=np.load("/home/liuchang/OT-Flow/single_plot_Baysian/bernoulli.npy")
     # w_data=torch.from_numpy(w_data).squeeze().to(device).float()
-    X_data=np.random.normal(size=(10000,1))-3+6*(np.random.uniform(size=(10000,1))>(1/3))
-    w_data=torch.ones(X_data.shape).to(device).squeeze().float()
-
+    # X_data=np.random.normal(size=(10000,1))-3+6*(np.random.uniform(size=(10000,1))>(1/3))
+    w_data=torch.ones(x.shape).to(device).squeeze().float()
+   
 
     h = (tspan[1] - tspan[0]) / nt
 
@@ -267,13 +267,20 @@ def integrate_ex(x, net, tspan, nt, stepper="rk4", alph=[1.0, 1.0, 1.0], interme
 
     h = (tspan[1] - tspan[0]) / nt
 
-
+    
+    d=net.d
+    x=x.reshape(-1,d)
     z = pad(x, (0, 5, 0, 0), value=0)
-
+   
     # X_data,w_data=np.load("/home/liuchang/OT-Flow/single_plot_Baysian/bernoulli.npy")
     # w_data=torch.from_numpy(w_data).squeeze().to(device).float()
-    X_data=np.random.normal(size=(10000,1))-3+6*(np.random.uniform(size=(10000,1))>(1/3))
-    w_data=torch.ones(X_data.shape).to(device).squeeze().float()
+    # X_data=np.random.normal(size=(10000,1))-3+6*(np.random.uniform(size=(10000,1))>(1/3))
+
+    w_data=torch.ones(x.shape[0]).to(device).squeeze().float()
+    # weight_osc=np.load("data/data_WFR/theta_SVGD_osc_weight.npy")[:x.shape[0],-1]
+    # w_data=weight_osc/weight_osc.sum()*weight_osc.shape[0]
+    # w_data=torch.from_numpy(w_data).squeeze().to(device).float()
+    
 
     # z = pad(z, (0, 1, 0, 0), value=1)
     z=torch.cat((z,w_data.reshape(-1,1)),dim=1)
@@ -344,18 +351,21 @@ def odefun(x, t, net, v0, alphaa=1):
     z = pad(x[:, :d], (0, 1, 0, 0), value=t)  # concatenate with the time t
     # z2 = pad(x[:, :d], (0, 1, 0, 0), value=1-t)
 
+
     # X_data,w_data=np.load("/home/liuchang/OT-Flow/single_plot_Baysian/bernoulli.npy")
     # w_data=torch.from_numpy(w_data).squeeze().to(device).float()
-    X_data=np.random.normal(size=(10000,1))-3+6*(np.random.uniform(size=(10000,1))>(1/3))
-    w_data=torch.ones(X_data.shape).to(device).squeeze().float()
+
+    # X_data=np.random.normal(size=(10000,1))-3+6*(np.random.uniform(size=(10000,1))>(1/3))
+    w_data=torch.ones(x.shape[0]).to(device).squeeze().float()
+
+    # weight_osc=np.load("data/data_WFR/theta_SVGD_osc_weight.npy")[:x.shape[0],-1]
+    # w_data=weight_osc/weight_osc.sum()*weight_osc.shape[0]
+    # w_data=torch.from_numpy(w_data).squeeze().to(device).float()
 
     
     unnorm=torch.exp(x[:,-4]+x[:,-2])*w_data
     new_weight=unnorm/torch.sum(unnorm)*x.shape[0]
-    # new_weight = torch.exp(x[:,-4]+x[:,-2]) /(torch.sum(torch.exp(x[:,-4]+x[:,-2])))*x.shape[0]*w_data
 
-    # new_weight[new_weight<10**(-5)]=0
-    # z = z[new_weight>10**(-5)]
     Vx0 = net(z)
     # Vx02 = net(z2)
     ds0 = torch.dot(Vx0.squeeze(), new_weight/x.shape[0])
@@ -369,8 +379,7 @@ def odefun(x, t, net, v0, alphaa=1):
 
 
     dw = -1/alphaa*torch.mul(Vx, new_weight.unsqueeze(-1))
-    # print(dw.shape)
-    # print(w_data.shape)
+
 
     ds2=-1/alphaa*Vx0
 

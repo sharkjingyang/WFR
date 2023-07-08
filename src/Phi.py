@@ -82,7 +82,8 @@ class Phi(nn.Module):
         self.N = ResNN(d, m, nTh=nTh)
 
         # set initial values
-        self.w.weight.data = torch.ones(self.w.weight.data.shape)/m
+        # self.w.weight.data = torch.ones(self.w.weight.data.shape)/m
+        self.w.weight.data = torch.zeros(self.w.weight.data.shape)
         self.c.weight.data = torch.zeros(self.c.weight.data.shape)
         self.c.bias.data   = torch.zeros(self.c.bias.data.shape)
 
