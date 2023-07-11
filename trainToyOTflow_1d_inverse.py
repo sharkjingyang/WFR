@@ -64,7 +64,7 @@ parser.add_argument('--viz_freq', type=int, default=def_viz_freq)
 parser.add_argument('--val_freq', type=int, default=10000)  # no validation
 parser.add_argument('--gpu'     , type=int, default=0)
 parser.add_argument('--sample_freq', type=int, default=25000)
-parser.add_argument('--alphaa', type=float, default=2)   #source term coefficient
+parser.add_argument('--alphaa', type=float, default=10)   #source term coefficient
 
 args = parser.parse_args()
 
@@ -140,7 +140,7 @@ def compute_loss_1(net, x,x2, nt):
     costC2 = torch.log(torch.mean(torch.exp(z2[:, -1])))
 
 
-    Jc = (costC1+costC2) * 100 + costL1 * 1 +costV1*1 +torch.abs(aaaa1-costC2)*1
+    Jc = (costC1+costC2) * 100 + costL1 * 10 +costV1*1 +torch.abs(aaaa1-costC2)*1
     # print(costV1)
     cs[1] = cs[1] + costC2
     return Jc, cs, weights, 0
@@ -187,11 +187,10 @@ if __name__ == '__main__':
 
     print(args.data)
     X_data,_ = toy_data.inf_train_gen(args.data, batch_size=args.batch_size, require_density=False)
-    # X_data=np.random.normal(size=(10000,1))-3+6*(np.random.uniform(size=(10000,1))>(1/3))
-    x0=torch.from_numpy(X_data).to(device).squeeze().float()
+    # x0=torch.from_numpy(X_data).to(device).squeeze().float()
 
 
-    # X_data,w_data=np.load("/home/liuchang/OT-Flow/single_plot_Baysian/bernoulli.npy")
+    # X_data,w_data=np.load("single_plot_Baysian/bernoulli.npy")
     # w_data=torch.from_numpy(w_data).to(device).squeeze().float()
     # x0=torch.from_numpy(X_data).to(device).squeeze().float()
 
@@ -402,7 +401,7 @@ if __name__ == '__main__':
                 curr_state = net.state_dict()
                 net.load_state_dict(best_params)
 
-                nSamples = 1000
+                nSamples = 100000
                 p_samples, _ = cvt(torch.Tensor(toy_data.inf_train_gen(args.data, batch_size=nSamples, require_density=False) ))
                 y = cvt(torch.randn(nSamples, d)) # sampling from the standard normal (rho_1)
 

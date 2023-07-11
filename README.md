@@ -1,4 +1,4 @@
-# UOT-gen
+# OT-Flow
 Pytorch implementation of our UOT-gen。
 
 ## Associated Publication
@@ -28,11 +28,5 @@ for 2d and high-dimension experiment, see
 
 ```
 trainToyOTflow_high_Bayes.py (train) & high_dim_Bayes folder (evaluation)
-```
-
-for traditional optimization method to solve UOT:
-
-```
- OT-traditional folder 
 ```
 

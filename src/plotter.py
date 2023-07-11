@@ -291,6 +291,12 @@ def plot1d(net, x, y, nt_val, sPath, sPath2, sPath3, sPath4, sPath5, sTitle="", 
     fx,phi= integrate_ex(x, net, [0.0, 1], nt_val, stepper="rk4", alph=net.alph, alphaa=alphaa,intermediates=True)
     genModel,phi_bar= integrate_ex_copy(y[:, 0:d], net, [1, 0.0], nt_val, stepper="rk4", alph=net.alph, alphaa=alphaa,intermediates=True)
 
+    genModel1 = genModel.detach().cpu().numpy()
+    X_p=genModel1[:,0:d,-1]
+    w_p=genModel1[:,-1,-1]
+    np.save("single_plot_Baysian/z_inverse_1d.npy",X_p)
+    np.save("single_plot_Baysian/w_inverse_1d.npy",w_p)
+
     
     if d>50:
         ##high Bayes experiment
@@ -330,7 +336,7 @@ def plot1d(net, x, y, nt_val, sPath, sPath2, sPath3, sPath4, sPath5, sTitle="", 
 
 
 
-    ##plot 1d
+    #plot 1d
     if d==1:
         # nBins=100
         # fx1=fx.detach().cpu().numpy()

@@ -20,14 +20,15 @@ dt_space=np.arange(start=0,stop=T+dt,step=dt)
 observe_data=analytical_sol(x=0.2,t=dt_space)+np.random.normal(loc=0,scale=sigma,size=dt_space.shape)
 
 
-# plt.plot(T_space,true_sol,"--",label="analytic solution")
-# plt.scatter(dt_space[1:],observe_data[1:],s=4,color="red",label="observation")
-# plt.ylim(-2,3)
-# plt.xlabel("t")
-# plt.ylabel("v(t)")
-# plt.grid(linestyle = '--')
-# plt.legend()
+plt.plot(T_space,true_sol,"--",label="analytic solution")
+plt.scatter(dt_space[1:],observe_data[1:],s=4,color="red",label="observation")
+plt.ylim(-2,3)
+plt.xlabel("t",fontsize=18)
+plt.ylabel("v(t)",fontsize=18)
+plt.grid(linestyle = '--')
+plt.legend()
 # plt.show()
+plt.savefig("single_plot_Baysian/observation.pdf",dpi=300)
 
 
 def Gaussian(x,mu,sigma):
@@ -58,7 +59,7 @@ w=w/np.sum(w)*X_prior.shape[0]
 
 
 
-np.save("/home/liuchang/OT-Flow/single_plot_Baysian/bernoulli.npy",(X_prior,w))
+np.save("single_plot_Baysian/bernoulli.npy",(X_prior,w))
 p=np.argsort(X_prior,axis=0)
 X_prior=np.sort(X_prior,axis=0)
 w=w[p].squeeze().reshape(-1,1)
@@ -74,6 +75,7 @@ plt.ylim(0,3)
 plt.xticks(size=12)
 plt.yticks(size=12)
 plt.legend(fontsize=12)
+# plt.show()
 plt.savefig("/home/liuchang/OT-Flow/posterior_data/inverse.png", dpi=300)
 plt.close()
 

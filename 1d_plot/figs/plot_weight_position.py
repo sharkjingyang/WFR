@@ -13,7 +13,7 @@ X_data_2_inv,w_data_2_inv=np.load("C:/Users/shark/桌面/WFR-main/1d_plot/figs/i
 
 
 
-plt.figure()
+plt.figure(figsize=(12,8))
 plt.subplot(2, 3, 1)
 for i in [0,2,4,6,8]:
     plt.scatter(X_data_10[0:1000:,i],w_data_10[0:1000,i],label="T=%.2f"%(i/8),s=3)
@@ -61,5 +61,6 @@ plt.xlim(-6,6)
 plt.ylim(0,3.5)
 plt.legend(loc="upper right",fontsize="10",markerscale=2.5)
 plt.grid()
-plt.show()
+# plt.show()
+plt.savefig('C:/Users/shark/桌面/weight_small_update2.pdf',dpi=600)
 

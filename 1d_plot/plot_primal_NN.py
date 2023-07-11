@@ -57,4 +57,17 @@ plt.ylim(0.2,3)
 plt.xlabel(r"$\alpha$")
 plt.ylabel(r"$\mathcal{J}_{SWFR}$")
 plt.legend(loc=4,prop = {'size':15})
-plt.show()
+# plt.show()
+plt.savefig("1d_plot/J_1_update.pdf",dpi=600)
+plt.close()
+
+
+# x= np.array([1e-1,9e-2,8e-2,7e-2,6e-2,5e-2,4e-2,3e-2,2e-2,1e-2])
+# y=  np.array([2.3375,2.3625,2.381,2.4086,2.427,2.4501,2.4682,2.4932,2.5302,2.567])
+# plt.plot(x,y)
+# plt.yscale("log")
+# plt.xlabel(r"$\gamma$")
+# plt.ylabel(r"$\mathcal{J}_{SWFR}$")
+# plt.legend(loc=4,prop = {'size':15})
+# plt.show()
+

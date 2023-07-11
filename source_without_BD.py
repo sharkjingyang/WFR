@@ -22,7 +22,7 @@ def density(x,centers,weights=[0.5, 0.5]):
 
 def OTFlowProblem_1d(x, Phi, tspan, nt, stepper="rk4", alph=[1.0, 1.0, 1.0], alphaa=1,jjj=0, device=device):
 
-    # X_data,w_data=np.load("/home/liuchang/OT-Flow/single_plot_Baysian/bernoulli.npy")
+    # X_data,w_data=np.load("single_plot_Baysian/bernoulli.npy")
     # w_data=torch.from_numpy(w_data).squeeze().to(device).float()
     # X_data=np.random.normal(size=(10000,1))-3+6*(np.random.uniform(size=(10000,1))>(1/3))
     w_data=torch.ones(x.shape).to(device).squeeze().float()
@@ -272,11 +272,12 @@ def integrate_ex(x, net, tspan, nt, stepper="rk4", alph=[1.0, 1.0, 1.0], interme
     x=x.reshape(-1,d)
     z = pad(x, (0, 5, 0, 0), value=0)
    
-    # X_data,w_data=np.load("/home/liuchang/OT-Flow/single_plot_Baysian/bernoulli.npy")
+    # X_data,w_data=np.load("single_plot_Baysian/bernoulli.npy")
     # w_data=torch.from_numpy(w_data).squeeze().to(device).float()
     # X_data=np.random.normal(size=(10000,1))-3+6*(np.random.uniform(size=(10000,1))>(1/3))
 
     w_data=torch.ones(x.shape[0]).to(device).squeeze().float()
+
     # weight_osc=np.load("data/data_WFR/theta_SVGD_osc_weight.npy")[:x.shape[0],-1]
     # w_data=weight_osc/weight_osc.sum()*weight_osc.shape[0]
     # w_data=torch.from_numpy(w_data).squeeze().to(device).float()
@@ -352,10 +353,10 @@ def odefun(x, t, net, v0, alphaa=1):
     # z2 = pad(x[:, :d], (0, 1, 0, 0), value=1-t)
 
 
-    # X_data,w_data=np.load("/home/liuchang/OT-Flow/single_plot_Baysian/bernoulli.npy")
+    # X_data,w_data=np.load("single_plot_Baysian/bernoulli.npy")
     # w_data=torch.from_numpy(w_data).squeeze().to(device).float()
 
-    # X_data=np.random.normal(size=(10000,1))-3+6*(np.random.uniform(size=(10000,1))>(1/3))
+
     w_data=torch.ones(x.shape[0]).to(device).squeeze().float()
 
     # weight_osc=np.load("data/data_WFR/theta_SVGD_osc_weight.npy")[:x.shape[0],-1]
