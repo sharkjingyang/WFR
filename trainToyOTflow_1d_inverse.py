@@ -34,7 +34,7 @@ from src.mmd_new import *
 
 def_viz_freq = 5
 def_batch = 10000
-def_niter = 5000
+def_niter = 1000
 
 parser = argparse.ArgumentParser('UOT-Flow')
 parser.add_argument(
@@ -187,7 +187,7 @@ if __name__ == '__main__':
 
     print(args.data)
     X_data,_ = toy_data.inf_train_gen(args.data, batch_size=args.batch_size, require_density=False)
-    # x0=torch.from_numpy(X_data).to(device).squeeze().float()
+    x0=torch.from_numpy(X_data).to(device).squeeze().float()
 
 
     # X_data,w_data=np.load("single_plot_Baysian/bernoulli.npy")

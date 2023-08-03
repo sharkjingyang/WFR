@@ -294,8 +294,8 @@ def plot1d(net, x, y, nt_val, sPath, sPath2, sPath3, sPath4, sPath5, sTitle="", 
     genModel1 = genModel.detach().cpu().numpy()
     X_p=genModel1[:,0:d,-1]
     w_p=genModel1[:,-1,-1]
-    np.save("single_plot_Baysian/z_inverse_1d.npy",X_p)
-    np.save("single_plot_Baysian/w_inverse_1d.npy",w_p)
+    # np.save("single_plot_Baysian/z_inverse_1d.npy",X_p)
+    # np.save("single_plot_Baysian/w_inverse_1d.npy",w_p)
 
     
     if d>50:
@@ -361,14 +361,16 @@ def plot1d(net, x, y, nt_val, sPath, sPath2, sPath3, sPath4, sPath5, sTitle="", 
         w_p=fx1[:,-1,-1]
         Gaussian_p=y.detach().cpu().numpy()
         data_p=x.detach().cpu().numpy()
-        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/z_final_1d.npy",X_p)
-        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/w_final_1d.npy",w_p)
-        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/Gaussian_samples_1d.npy",Gaussian_p)
+        np.save("MMD_data_output/output/z_full_1d.npy",fx1[:,0:d,:])
+        np.save("MMD_data_output/output/z_final_1d.npy",X_p)
+        np.save("MMD_data_output/output/w_final_1d.npy",w_p)
+        np.save("MMD_data_output/output/Gaussian_samples_1d.npy",Gaussian_p)
         X_p=genModel1[:,0:d,-1]
         w_p=genModel1[:,-1,-1]
-        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/z_inverse_1d.npy",X_p)
-        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/w_inverse_1d.npy",w_p)
-        np.save("C:/Users/shark/桌面/WFR-main/MMD_data_output/output/data_samples_1d.npy",data_p)
+        np.save("MMD_data_output/output/z_inverse_full_1d.npy",genModel1[:,0:d,:])
+        np.save("MMD_data_output/output/z_inverse_1d.npy",X_p)
+        np.save("MMD_data_output/output/w_inverse_1d.npy",w_p)
+        np.save("MMD_data_output/output/data_samples_1d.npy",data_p)
 
 
 
