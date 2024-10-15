@@ -1,7 +1,7 @@
 # UOT-gen
 Pytorch implementation of our UOT-gen。
 
-The code is developed based on [OT-Flow](https://github.com/EmoryMLIP/OT-Flow).
+The code is developed based on [OT-Flow](https://github.com/EmoryMLIP/OT-Flow). 
 
 ## Associated Publication
 
