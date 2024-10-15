@@ -1,19 +1,25 @@
-# OT-Flow
+# UOT-gen
 Pytorch implementation of our UOT-gen。
+
+The code is developed based on [OT-Flow](https://github.com/EmoryMLIP/OT-Flow).
 
 ## Associated Publication
 
-A deep learning framework for geodesics under spherical Wasserstein-Fisher-Rao metric and its application for weighted sample generation
+A Machine Learning Framework for Geodesics Under Spherical Wasserstein–Fisher–Rao Metric and Its Application for Weighted Sample Generation
 
-Paper: https://arxiv.org/abs/2208.12145
+Paper: https://link.springer.com/article/10.1007/s10915-023-02396-y
 
 Please cite as
     
-    @article{jing2022deep,
-      title={A deep learning framework for geodesics under spherical Wasserstein-Fisher-Rao metric and its application for weighted sample generation},
+    @article{jing2024machine,
+      title={A Machine Learning Framework for Geodesics Under Spherical Wasserstein--Fisher--Rao Metric and Its Application for Weighted Sample Generation},
       author={Jing, Yang and Chen, Jiaheng and Li, Lei and Lu, Jianfeng},
-      journal={arXiv preprint arXiv:2208.12145},
-      year={2022}
+      journal={Journal of Scientific Computing},
+      volume={98},
+      number={1},
+      pages={5},
+      year={2024},
+      publisher={Springer}
     }
 
 
@@ -28,5 +34,12 @@ for 2d and high-dimension experiment, see
 
 ```
 trainToyOTflow_high_Bayes.py (train) & high_dim_Bayes folder (evaluation)
+```
+
+for primal-dual method to solve OT/sWFR, see
+
+```
+primal_dual_1d/OT-main.m
+primal_dual_1d/SWFR-main.m
 ```
 
